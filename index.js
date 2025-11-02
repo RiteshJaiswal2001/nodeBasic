@@ -69,6 +69,7 @@ app.delete('/api/users/:id',(req,res)=>{
 
 //As we see above the three request `get, patch, delete` all are using same route so we can wriet then in another way which is increase the redeability of code and reduce the complexity.
 
+
 app
   .route("/api/users/:id")
   .get((req, res) => {
