@@ -22,7 +22,7 @@
 //---------REST API`s----------
 
 const express = require("express");
-const users = require("./MOCK_DATA.json");
+let users = require("./MOCK_DATA.json");
 const fs = require("fs");
 const app = express();
 const PORT = 8000;
@@ -73,22 +73,42 @@ app
   .get((req, res) => {
     const id = Number(req.params.id);
     const user = users.find((user) => user.id === id);
+    console.log("Visited");
+
     return res.json(user);
   })
   .patch((req, res) => {
-    return res.json({ Status: "Pending" });
+    const id = Number(req.params.id);
+    const body = req.body;
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].id === id) {
+        users[i] = { id: id, ...body };
+        console.log("hii");
+      }
+    }
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
+      return res.json({ status: "success", id: id });
+    });
   })
   .delete((req, res) => {
-    return res.json({ Status: "Pending" });
+    const id = Number(req.params.id);
+    console.log(id);
+    console.log(users.length);
+
+    users = users.filter((user) => id !== user.id);
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
+      return res.json({ status: "success", id: users.length });
+    });
+    console.log(users.length);
   });
 
 app.post("/api/users", (req, res) => {
   const body = req.body;
-  users.push({ ...body, id: users.length + 1 });
+  users.push({ id: users.length + 1, ...body });
   fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
     return res.json({ status: "success", id: users.length });
   });
-  console.log(body);
+  // console.log(body);
 
   //   return res.json({ Status: "Pending" });
 });
